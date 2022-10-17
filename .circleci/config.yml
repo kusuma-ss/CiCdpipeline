@@ -12,11 +12,8 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            
             npm install
             npm run build
-            
-            exit 1
       - save_cache:
           paths: 
             - /home/ubuntu/.m2
@@ -33,7 +30,6 @@ jobs:
         - run:
             name: Back-end build
             command: |
-              
               npm install
               npm run build
               exit 1
