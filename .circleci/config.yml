@@ -41,7 +41,7 @@ jobs:
   test-frontend:
     executor: nodejs
     steps:
-    
+
       - checkout
 
       - restore_cache:
@@ -54,7 +54,7 @@ jobs:
             npm install
             npm run test
       - save_cache:
-          paths: [frontend/node_modules]
+          paths: [frontend/nodejs_modules]
           key: frontend-test
                
   test-backend:
@@ -70,7 +70,7 @@ jobs:
             npm install
             npm run test
       - save_cache:
-          paths: [backend/node_modules]
+          paths: [backend/nodejs_modules]
           key: backend-test
 
   scan-frontend:
@@ -86,9 +86,9 @@ jobs:
           command : | 
             cd frontend
             npm install
-            npm audit --audit-level=critical
+            npm audit fix --audit-level=critical
       - save_cache:
-          paths: [frontend/node_modules]
+          paths: [frontend/nodeJS_modules]
           key: frontend-scan
 
   scan-backend:
@@ -104,9 +104,9 @@ jobs:
           command : | 
             cd backend
             npm install
-            npm audit --audit-level=critical
+            npm audit fix --audit-level=critical
       - save_cache:
-          paths: [backend/node_modules]
+          paths: [backend/nodeJS_modules]
           key: backend-scan
 
 workflows:
