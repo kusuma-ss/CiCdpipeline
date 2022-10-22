@@ -147,8 +147,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file backend.yml \
-              --tags project="Udapeople-Backend-${CIRCLE_WORKFLOW_ID:0:10}"\
-              --stack-name "Udapeople-Backend-${CIRCLE_WORKFLOW_ID:0:10} " \
+              --tags project="UdapeopleBackend-${CIRCLE_WORKFLOW_ID:0:10}"\
+              --stack-name "UdapeopleBackend-${CIRCLE_WORKFLOW_ID:0:10} " \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:10}"  
               
       - run:
@@ -157,8 +157,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file frontend.yml \
-              --tags project="Udapeople-Frontend-${CIRCLE_WORKFLOW_ID:0:10}"\
-              --stack-name "Udapeople-Frontend-${CIRCLE_WORKFLOW_ID:0:10}" \
+              --tags project="UdapeopleFrontend-${CIRCLE_WORKFLOW_ID:0:10}"\
+              --stack-name "UdapeopleFrontend-${CIRCLE_WORKFLOW_ID:0:10}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:10}"  
              
       - run:
@@ -167,7 +167,7 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=Udapeople-Backend-${CIRCLE_WORKFLOW_ID:0:10}" \
+            --filters "Name=tag:project,Values=UdapeopleBackend-${CIRCLE_WORKFLOW_ID:0:10}" \
             --output text >> inventory.txt
             
 
@@ -185,7 +185,7 @@ jobs:
     steps:
       - checkout 
       - add_ssh_keys:
-          fingerprints: ["3b:fb:c6:62:91:a1:4e:c3:13:bc:d5:bd:d4:d2:cd:c5"]
+          fingerprints: ["f8:ab:2b:a9:91:ec:14:a7:cd:3b:2e:fd:38:56:1f:61"]
       - attach_workspace:
           at: ~/
       - run:
