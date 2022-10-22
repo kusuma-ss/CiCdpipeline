@@ -14,12 +14,12 @@ commands:
           name: Destroy backend environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name udapeople-backend-ID 
+            aws cloudformation delete-stack --stack-name Udapeople-backend-ID 
       - run:
           name : Destory frontend environment
           when: on_fail
           command : |
-            aws cloudformation delete-stack --stack-name udapeople-frontend-ID
+            aws cloudformation delete-stack --stack-name Udapeople-frontend-ID
 
 
 
@@ -147,8 +147,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file backend.yml \
-              --tags project="udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"\
-              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} " \
+              --tags project="Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"\
+              --stack-name "Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} " \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               
       - run:
@@ -157,8 +157,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file frontend.yml \
-              --tags project="udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"\
-              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project="Udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"\
+              --stack-name "Udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
              
       - run:
@@ -167,7 +167,7 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --filters "Name=tag:project,Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text >> inventory.txt
             
 
