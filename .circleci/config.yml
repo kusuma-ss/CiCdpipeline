@@ -170,15 +170,35 @@ jobs:
             --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text >> inventory.txt
             
+
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - ./.circleci/ansible/inventory.txt
 
       - destroy-environment:  
           ID: "${CIRCLE_WORKFLOW_ID:0:7}"
           
-
+  configure-infrastructure:
+    docker:
+      - image : amazon/aws-cli
+    steps:
+      - checkout 
+      - add_ssh_keys:
+          fingerprints: ["3b:fb:c6:62:91:a1:4e:c3:13:bc:d5:bd:d4:d2:cd:c5"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            working_directory: ./.circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
         
 
 workflows:
