@@ -147,8 +147,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file backend.yml \
-              --tags project="UdapeopleBackend-${CIRCLE_WORKFLOW_ID:0:10}"\
-              --stack-name "UdapeopleBackend-${CIRCLE_WORKFLOW_ID:0:10} " \
+              --tags project="UdapeopleBackend${CIRCLE_WORKFLOW_ID:0:10}"\
+              --stack-name "UdapeopleBackend${CIRCLE_WORKFLOW_ID:0:10} " \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:10}"  
               
       - run:
@@ -157,8 +157,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file frontend.yml \
-              --tags project="UdapeopleFrontend-${CIRCLE_WORKFLOW_ID:0:10}"\
-              --stack-name "UdapeopleFrontend-${CIRCLE_WORKFLOW_ID:0:10}" \
+              --tags project="UdapeopleFrontend${CIRCLE_WORKFLOW_ID:0:10}"\
+              --stack-name "UdapeopleFrontend${CIRCLE_WORKFLOW_ID:0:10}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:10}"  
              
       - run:
@@ -167,7 +167,7 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=UdapeopleBackend-${CIRCLE_WORKFLOW_ID:0:10}" \
+            --filters "Name=tag:project,Values=UdapeopleBackend${CIRCLE_WORKFLOW_ID:0:10}" \
             --output text >> inventory.txt
             
 
