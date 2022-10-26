@@ -198,7 +198,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
+            test -e /usr/bin/python3 || (sudo apt -y update && sudo apt install -y python3)
             cd .circleci/ansible
             ansible-playbook -i inventory.txt -e 'ansible_python_interpreter=/usr/bin/python3'  --private-key /Users/CHARAN/Developments/cdond-c3-projectstarter-master/udacity.pem configure-server.yml
 
@@ -230,12 +230,6 @@ jobs:
 
 workflows:
   default:
-    jobs:
-      - deploy-infrastructure:
-          filters:
-            branches:
-              only: 
-                - master
-      - configure-infrastructure:
-          requires: 
-            - deploy-infrastructure
+    jobs: 
+      - configure-infrastructure
+         
