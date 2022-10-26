@@ -200,8 +200,9 @@ jobs:
             cd .circleci/ansible
             working_directory: ./.circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy_environment:
-          ID: "${CIRCLE_WORKFLOW_ID:0:7}" 
+
+      - destroy-environment:  
+          ID: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
