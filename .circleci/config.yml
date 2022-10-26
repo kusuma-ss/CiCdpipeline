@@ -186,7 +186,7 @@ jobs:
     steps:
       - checkout 
       - add_ssh_keys:
-          fingerprints: ["f8:ab:2b:a9:91:ec:14:a7:cd:3b:2e:fd:38:56:1f:61"]
+          fingerprints: ["3b:fb:c6:62:91:a1:4e:c3:13:bc:d5:bd:d4:d2:cd:c5"]
       - attach_workspace:
           at: .circleci/ansible/
       - run:
@@ -198,6 +198,7 @@ jobs:
       - run:
           name: Configure server
           command: |
+            test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
             cd .circleci/ansible
             ansible-playbook -i inventory.txt -e 'ansible_python_interpreter=/usr/bin/python3'  --private-key /Users/CHARAN/Developments/cdond-c3-projectstarter-master/udacity.pem configure-server.yml
 
