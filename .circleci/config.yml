@@ -183,7 +183,7 @@ jobs:
           
   configure-infrastructure:
     docker:
-      - image: python:3.9.0-alpine
+      - image: python:3.8.0-alpine
     steps:
       - checkout 
       - add_ssh_keys:
@@ -194,9 +194,9 @@ jobs:
           name: Install dependencies
           working_directory: ./.circleci/ansible
           command: |
-            sudo apt -y update
-            sudo apt install -y python3
-            sudo pip install paramiko
+            apt -y update
+            apt install -y python3
+            pip install paramiko
             apk add --update ansible
             ansible --version
       - run:
