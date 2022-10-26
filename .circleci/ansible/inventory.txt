@@ -1,2 +1,2 @@
 [web]
- ssh -i "udacity.pem" ubuntu@ec2-54-91-202-78.compute-1.amazonaws.com
+ 54.91.202.78
