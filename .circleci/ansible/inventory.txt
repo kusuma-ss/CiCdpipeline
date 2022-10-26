@@ -1,3 +1,2 @@
 [web]
-54.196.138.197
-52.54.111.107
+ ssh -i "udacity.pem" ubuntu@ec2-54-91-202-78.compute-1.amazonaws.com
