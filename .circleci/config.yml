@@ -200,6 +200,7 @@ jobs:
       - run:
           name: Configure server
           command: |
+            ansible HOST -i .circleci/ansible/inventory.txt -m ping -vvvvv
             cat .circleci/ansible/inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml 
 
