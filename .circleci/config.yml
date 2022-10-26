@@ -200,7 +200,7 @@ jobs:
           name: Configure server
           command: |
             cd .circleci/ansible
-            ansible-playbook -i /Users/CHARAN/Developments/cdond-c3-projectstarter-master/.circleci/ansible/inventory.txt  configure-server.yml
+            ansible-playbook -i inventory.txt  configure-server.yml
 
       - destroy-environment:  
           ID: "${CIRCLE_WORKFLOW_ID:0:7}"
