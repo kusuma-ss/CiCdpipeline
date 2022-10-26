@@ -194,6 +194,9 @@ jobs:
           name: Install dependencies
           working_directory: ./.circleci/ansible
           command: |
+            sudo apt -y update
+            sudo apt install -y python3
+            sudo pip install paramiko
             apk add --update ansible
             ansible --version
       - run:
