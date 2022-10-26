@@ -172,6 +172,7 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text >> inventory.txt
             
+            cat inventory.txt
 
       - persist_to_workspace:
           root: .
@@ -187,19 +188,19 @@ jobs:
     steps:
       - checkout 
       - add_ssh_keys:
-          fingerprints: ["7d:e4:61:45:43:8f:91:71:f5:70:5a:8b:57:03:f9:73"]
+          fingerprints: ["5f:a0:89:ef:32:f9:a3:ba:d0:8c:7a:f1:c5:a1:c6:e1"]
       - attach_workspace:
           at: .circleci/ansible/
       - run:
           name: Install dependencies
-          working_directory: ./.circleci/ansible
+          working_directory: .circleci/ansible
           command: |
             apk add --update ansible
             ansible --version
       - run:
           name: Configure server
           command: |
-            cd .circleci/ansible
+            cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
 
       - destroy-environment:  
