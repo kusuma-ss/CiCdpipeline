@@ -169,7 +169,6 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text >> inventory.txt
             
 
@@ -189,7 +188,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["f8:ab:2b:a9:91:ec:14:a7:cd:3b:2e:fd:38:56:1f:61"]
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Install dependencies
           command: |
@@ -201,7 +200,8 @@ jobs:
             cd .circleci/ansible
             working_directory: ./.circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-        
+      - destroy_environment:
+          ID: "${CIRCLE_WORKFLOW_ID:0:7}" 
 
 workflows:
   default:
@@ -217,4 +217,10 @@ workflows:
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only:
+                - master
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
