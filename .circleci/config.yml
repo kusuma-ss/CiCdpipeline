@@ -201,7 +201,7 @@ jobs:
           name: Configure server
           command: |
             cat .circleci/ansible/inventory.txt
-            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml --private-key macBook2Ec2.pem
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml 
 
       - destroy-environment:  
           ID: "${CIRCLE_WORKFLOW_ID:0:7}"
