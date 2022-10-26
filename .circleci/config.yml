@@ -145,29 +145,31 @@ jobs:
           name: Ensure back-end infrastructure exists
           working_directory: ./.circleci/files
           command: |
-            aws cloudformation deploy \
-              --template-file backend.yml \
-              --tags project="UdapeopleBackend${CIRCLE_WORKFLOW_ID:0:10}"\
-              --stack-name "UdapeopleBackend${CIRCLE_WORKFLOW_ID:0:10} " \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:10}"  
+            # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
+              aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople 
               
       - run:
           name: Ensure front-end infrastructure exist
           working_directory: ./.circleci/files
           command: |
-            aws cloudformation deploy \
-              --template-file frontend.yml \
-              --tags project="UdapeopleFrontend${CIRCLE_WORKFLOW_ID:0:10}"\
-              --stack-name "UdapeopleFrontend${CIRCLE_WORKFLOW_ID:0:10}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:10}"  
-             
+            # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
+              aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople
+                      
       - run:
           name: Add back-end ip to ansible inventory
           working_directory: ./.circleci/ansible
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=UdapeopleBackend${CIRCLE_WORKFLOW_ID:0:10}" \
+            --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text >> inventory.txt
             
 
