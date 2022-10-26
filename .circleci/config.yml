@@ -199,9 +199,8 @@ jobs:
       - run:
           name: Configure server
           command: |
-            test -e /usr/bin/python3 || (sudo apt -y update && sudo apt install -y python3)
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt  configure-server.yml
+            ansible-playbook -i /Users/CHARAN/Developments/cdond-c3-projectstarter-master/.circleci/ansible/inventory.txt  configure-server.yml
 
       - destroy-environment:  
           ID: "${CIRCLE_WORKFLOW_ID:0:7}"

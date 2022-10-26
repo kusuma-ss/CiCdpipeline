@@ -18,8 +18,7 @@
 
     - name: "install python for Ansible."
       become: true
-      raw: echo "hello world"
-      #raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
+      raw: test -e /usr/bin/python3 || (sudo apt -y update && sudo apt install -y python3)
       changed_when: false
 
   # Get the environment variables from CircleCI and add to the EC2 instance
