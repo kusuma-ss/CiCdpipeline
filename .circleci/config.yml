@@ -54,7 +54,7 @@ jobs:
           keys: [frontend-build]
       - run:
           name: Build front-end
-          working_directory: ./forntend
+          #working_directory: ./forntend
           command: |
             cd frontend
             npm install
