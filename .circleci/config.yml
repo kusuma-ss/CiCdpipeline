@@ -48,7 +48,6 @@ executors:
 jobs:
   build-frontend:
     executor: nodejs
-    working_directory: ./cdond-c3-projectstarter-master/forntend
     steps:
       - checkout
       
