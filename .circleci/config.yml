@@ -48,14 +48,16 @@ executors:
 jobs:
   build-frontend:
     executor: nodejs
+    working_directory: ./cdond-c3-projectstarter-master/forntend
     steps:
       - checkout
+      
       - restore_cache:
           keys: [frontend-built]
 
       - run:
           name: Build front-end
-          working_directory: ./forntend
+          working_directory: ./cdond-c3-projectstarter-master/forntend
           command: |
             ls -lrt  
             ls -a
