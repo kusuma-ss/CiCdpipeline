@@ -51,11 +51,11 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          keys: [frontend-built]
 
       - run:
           name: Build front-end
-          #working_directory: ./forntend
+          working_directory: ./forntend
           command: |
             cd frontend
             ls -lrt  
@@ -63,8 +63,8 @@ jobs:
             npm install
             npm run build
       - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-build
+          paths: [frontent/node_modules]
+          key: frontend-built
       - run: 
           command: cat node_module
 
