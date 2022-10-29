@@ -55,9 +55,11 @@ jobs:
 
       - run:
           name: Build front-end
-          working_directory: ./forntend
+          #working_directory: ./forntend
           command: |
-            
+            cd frontend
+            ls -lrt  
+            ls -a
             npm install
             npm run build
       - save_cache:
@@ -65,7 +67,7 @@ jobs:
           key: frontend-build
       - run: 
           command: cat node_module
-          
+
   build-backend:
     executor: nodejs
     steps:
