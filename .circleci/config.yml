@@ -248,7 +248,7 @@ jobs:
             npm install
             npm run migrations > migrations_dump.txt
       - run:
-          name: Send migration status to memstash.io
+          name: Send migration status to kvdb.io
           command: |   
               if grep -q "has been executed successfully." ~/backend/migrations_dump.txt
               then
@@ -438,4 +438,21 @@ workflows:
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
-
+      
+      - run-migrations:
+          requires:
+            - configure-infrastructure
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-backend:
+          requires:
+            - run-migrations
+      - deploy-frontend:
+          requires:
+            - run-migrations
+      - smoke-test:
+          requires:
+            - deploy-backend
+            - deploy-frontend
