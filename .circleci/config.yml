@@ -48,6 +48,7 @@ executors:
 jobs:
   build-frontend:
     executor: nodejs
+    
     steps:
       - checkout
       
@@ -56,7 +57,7 @@ jobs:
 
       - run:
           name: Build front-end
-          working_directory: ./cdond-c3-projectstarter-master/forntend
+          working_directory: /cdond-c3-projectstarter-master/forntend
           command: |
             ls -lrt  
             ls -a
