@@ -199,20 +199,20 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> inventory
-            cat inventory
+              --output text >> inventory.txt
+            cat inventory.txt
 
       - persist_to_workspace:
           root: .
           paths:
-            - .circleci/ansible/inventory
+            - .circleci/ansible/inventory.txt
 
       - destroy-environment:  
           ID: "${CIRCLE_WORKFLOW_ID:0:7}"
           
   configure-infrastructure:
     docker:
-      - image: 3.12-rc-alpine3.15
+      - image: python:3.11-rc-alpine
       - image: amazon/aws-cli
     steps:
       - checkout 
@@ -429,11 +429,6 @@ jobs:
 workflows:
   default:
     jobs:
-      - deploy-infrastructure:
-          filters:
-            branches:
-              only:
-                - master
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
