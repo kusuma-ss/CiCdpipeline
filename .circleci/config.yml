@@ -59,7 +59,7 @@ jobs:
           name: Build front-end
           working_directory: ./.circleci/files
           command: |
-            cd /cdond-c3-projectstarter-master/frontend 
+            cd frontend 
             ls -a
             npm install
             npm run build
