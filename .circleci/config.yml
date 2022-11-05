@@ -372,8 +372,8 @@ jobs:
             fi
       - destroy-environment:  
           ID: "${CIRCLE_WORKFLOW_ID:0:7}"
-          
-      - revert_migrations:
+
+      - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   cloudfront-update:
@@ -396,7 +396,7 @@ jobs:
             --stack-name InitialStack \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
-      - revert_migrations:
+      - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           
           
