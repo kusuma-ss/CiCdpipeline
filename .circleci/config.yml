@@ -57,14 +57,14 @@ jobs:
 
       - run:
           name: Build front-end
-          working_directory: /cdond-c3-projectstarter-master/forntend
+          working_directory: /forntend
           command: |
-            ls -lrt  
+            cd /cdond-c3-projectstarter-master/frontend 
             ls -a
             npm install
             npm run build
       - save_cache:
-          paths: [frontent/node_modules]
+          paths: [frontend/node_modules]
           key: frontend-built
       - run: 
           command: cat node_module
