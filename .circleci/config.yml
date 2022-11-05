@@ -429,4 +429,12 @@ jobs:
 workflows:
   default:
     jobs:
-      - deploy-infrastructure
+      - deploy-infrastructure:
+          filters:
+            branches:
+              only:
+                - master
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
+            
