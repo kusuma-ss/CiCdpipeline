@@ -212,11 +212,12 @@ jobs:
           
   configure-infrastructure:
     docker:
-      - image: python:3.11-rc-alpine
+      - image: 3.12-rc-alpine3.15
+      - image: amazon/aws-cli
     steps:
       - checkout 
       - add_ssh_keys:
-          fingerprints: ["5f:a0:89:ef:32:f9:a3:ba:d0:8c:7a:f1:c5:a1:c6:e1"]
+          fingerprints: ["74:54:be:70:86:06:87:01:32:bd:3f:eb:41:b4:78:8b"]
       - attach_workspace:
           at: .circleci/ansible/
       - run:
@@ -234,6 +235,7 @@ jobs:
 
       - destroy-environment:  
           ID: "${CIRCLE_WORKFLOW_ID:0:7}"
+          when: on_fail
       
   run-migrations:
     executor: nodejs
@@ -437,4 +439,3 @@ workflows:
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
-            
