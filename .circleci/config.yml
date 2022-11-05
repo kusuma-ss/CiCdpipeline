@@ -64,8 +64,7 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-built
-      - run: 
-          command: cat node_module
+      
 
   build-backend:
     executor: nodejs
