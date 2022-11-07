@@ -292,7 +292,7 @@ jobs:
             python3 -m pip install ansible
             yum install git python python-devel python-pip openssl ansible -y
             yum -y install curl
-            curl -sL https://rpm.nodesource.com/setup_16.x | sudo bash -
+            curl -sL https://rpm.nodesource.com/setup_16.x | bash -
             yum install -y nodejs
             yum install -y npm
             
