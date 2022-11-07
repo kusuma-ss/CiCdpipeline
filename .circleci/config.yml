@@ -212,7 +212,7 @@ jobs:
   configure-infrastructure:
     docker:
       - image: python:3.11-rc-alpine
-      - image: amazon/aws-cli
+      
     steps:
       - checkout 
       - add_ssh_keys:
@@ -250,10 +250,14 @@ jobs:
             sudo ./aws/install
       - run:
           name: Run migrations
+          no_output_timeout: 30m
           command: |
             cd backend
             npm install
-            npm run migrations > migrations_dump.txt
+            npm run migrations > migrations_dump.log
+            export migration_status=$(cat migration.log | grep -c "has been executed successfully")
+            tar -zcvf ~/backend.tar.gz .
+            ls
       - run:
           name: Send migration status to kvdb.io
           command: |   
@@ -263,6 +267,12 @@ jobs:
                   curl https://kvdb.io/9fHFr8wSN2yvn1REcLPguf/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d 1
               fi     
               echo "workflow_id=${CIRCLE_WORKFLOW_ID:0:7}"
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - backend.tar.gz
+            - migration.log
 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -275,11 +285,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt -y update && sudo apt install -y python3
+            apt -y update 
+            apt install -y python3
             apk add --update ansible
             ansible --version
-            sudo apt-get install -y npm 
-            sudo apt-get install -y node
+            apt-get install -y npm 
+            apt-get install -y node
             
       - run:
           name: Get backend url
@@ -325,7 +336,6 @@ jobs:
             aws --version
       - run:
           name: Deploy backend
-          working_directory: ./.circleci/ansible
           command: |
             cd backend
             npm i
