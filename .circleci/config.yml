@@ -285,12 +285,14 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apt -y update 
-            apt install -y python3
-            apk add --update ansible
-            ansible --version
-            apt-get install -y npm 
-            apt-get install -y node
+            yum update -y
+            yum install -y python3
+            wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            yum install epel-release-latest-7.noarch.rpm
+            yum update -y
+            yum install git python python-devel python-pip openssl ansible -y
+            yum install -y npm 
+            yum install -y node
             
       - run:
           name: Get backend url
@@ -343,7 +345,7 @@ jobs:
             cd ..
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
-            cat inventory
+            cat inventory.txt
             ansible-playbook -i inventory deploy-server.yaml -vv
 
       - destroy-environment:  
