@@ -1,19 +1,44 @@
 ---
-- name: copy backend files
-  become: true
+- name: Creates App directory
+  file:
+    path: ~/app
+    state: directory
+    
+- name: Upload app 
   copy:
-    src:  ~/project/artifact.tar.gz
-    dest: /home/ubuntu/artifact.tar.gz
-- name: extract backend files
+    src: files/artifact.tar
+    dest: "~/app"
+- name: Install dependencies
   become: true
   shell: |
-    cd /home/ubuntu
-    tar -vxf artifact.tar.gz
-    rm artifact.tar.gz
-- name: start node
+    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+    apt-get install -y nodejs
+    apt-get install gcc g++ make -y
+    npm install -g npm
+    npm install -g pm2
+    cd /home/ubuntu/app
+    tar xf /home/ubuntu/app/artifact.tar
+  
+- name: Start backend
+  shell:  |
+    /usr/bin/pm2 start /home/ubuntu/app/dist/main.js --name backend -f
+  environment:
+    ENVIRONMENT: production
+    NODE_ENV: production
+    TYPEORM_CONNECTION: postgres
+    TYPEORM_MIGRATIONS_DIR: ./src/migrations
+    TYPEORM_MIGRATIONS: ./src/migrations/*.ts
+    TYPEORM_ENTITIES: ./src/modules/domain/**/*.entity.ts
+    TYPEORM_HOST: peopledatabase.ckk21qjne6sv.us-east-1.rds.amazonaws.com
+    TYPEORM_PORT: 5432
+    TYPEORM_USERNAME: postgres
+    TYPEORM_PASSWORD: postgres123
+    TYPEORM_DATABASE: postgres
+
+- name: Start backend
   become: true
-  shell: |
-    cd /home/ubuntu
+  shell:  |
+    cd /home/ubuntu/app/root/project/backend
     npm install
     pm2 stop default
-    pm2 start npm -- start
+    pm2 start npm -- run star
