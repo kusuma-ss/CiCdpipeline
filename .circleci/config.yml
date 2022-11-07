@@ -259,11 +259,11 @@ jobs:
             npm install
             npm run migrations > migrations_dump.log
             export migration_status=$(cat migrations_dump.log | grep -c "has been executed successfully")
-            tar -zcvf ~/backend.tar.gz .
+            tar -zcvf ~/project/backend/backend.tar.gz .
       - run:
           name: Send migration status to kvdb.io
           command: |   
-              if grep -q "has been executed successfully." ~/backend/migrations_dump.txt
+              if grep -q "has been executed successfully." ~/backend/migrations_dump.log
               then
                   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
                   curl https://kvdb.io/9fHFr8wSN2yvn1REcLPguf/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d 1
@@ -274,7 +274,7 @@ jobs:
           root: ~/project/backend
           paths:
             - backend.tar.gz
-            #- migrations_dump.log
+            - migrations_dump.log
 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
