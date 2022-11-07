@@ -291,8 +291,10 @@ jobs:
             python3 -m pip install --user --upgrade pip 
             python3 -m pip install ansible
             yum install git python python-devel python-pip openssl ansible -y
-            yum install -y npm 
+            yum add nodejs 
+            zum add npm
             yum install -y node
+            yum install -y npm
             
       - run:
           name: Get backend url
