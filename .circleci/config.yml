@@ -163,7 +163,7 @@ jobs:
           command: yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
-          working_directory: ./.circleci/files
+          working_directory: ~/project/.circleci/files
           command: |
             # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
               aws cloudformation deploy \
@@ -174,7 +174,7 @@ jobs:
               
       - run:
           name: Ensure front-end infrastructure exist
-          working_directory: ./.circleci/files
+          working_directory: ~/project/.circleci/files
           command: |
             # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
               aws cloudformation deploy \
@@ -193,7 +193,7 @@ jobs:
                       
       - run:
           name: Add backend ip to ansible inventory
-          working_directory: ./.circleci/ansible
+          working_directory: ~/project/.circleci/ansible
           command: |
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -202,7 +202,7 @@ jobs:
             cat inventory.txt
 
       - persist_to_workspace:
-          root: .circleci/ansible/
+          root: .
           paths:
             - inventory.txt
 
@@ -218,18 +218,18 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["74:54:be:70:86:06:87:01:32:bd:3f:eb:41:b4:78:8b"]
       - attach_workspace:
-          at: .circleci/ansible/
+          at: ~/project/.circleci/ansible
       - run:
           name: Install dependencies
-          working_directory: .circleci/ansible
           command: |
             apk add --update ansible
             ansible --version
       - run:
           name: Configure server
+          working_directory: ~/project/.circleci/ansible
           command: |
-            cat .circleci/ansible/inventory.txt
-            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml 
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml 
 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -239,10 +239,9 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .circleci/ansible/
+          at: ~/project/.circleci/ansible
       - run:
           name: Install AWS CLI dependencies
-          working_directory: /tmp
           command: |
             sudo apt-get update && sudo apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -255,9 +254,8 @@ jobs:
             cd backend
             npm install
             npm run migrations > migrations_dump.log
-            export migration_status=$(cat migration.log | grep -c "has been executed successfully")
+            export migration_status=$(cat migrations_dump.log | grep -c "has been executed successfully")
             tar -zcvf ~/backend.tar.gz .
-            ls
       - run:
           name: Send migration status to kvdb.io
           command: |   
@@ -269,10 +267,10 @@ jobs:
               echo "workflow_id=${CIRCLE_WORKFLOW_ID:0:7}"
 
       - persist_to_workspace:
-          root: ~/
+          root: /.circleci/ansible
           paths:
             - backend.tar.gz
-            - migration.log
+            #- migrations_dump.log
 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -317,12 +315,15 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
 
       - persist_to_workspace:
-          root: .
+          root: ~/project/frontend
           paths:
-            - frontend/dist
+            - artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz
+      # Here's where you will add some code to rollback on failure 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
-      # Here's where you will add some code to rollback on failure  
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+       
 
   deploy-backend:
     docker:
@@ -331,13 +332,13 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["74:54:be:70:86:06:87:01:32:bd:3f:eb:41:b4:78:8b"]
+
       - attach_workspace:
-          at: .
+          at: ~/project/.circleci/ansible
       - run:
           name: Install dependencies
-          working_directory: /tmp
           command: |
-            apk add --update ansible curl rsync openssh nodejs npm
+            apk add --update ansible curl rsync openssh nodejs npm tar gzip
             ansible --version
             pip install awscli
             aws --version
@@ -368,11 +369,14 @@ jobs:
             cd ..
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml -vv
+            ansible-playbook -i inventory.txt deploy-backend.yml 
 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   smoke-test:
     docker:
@@ -388,23 +392,7 @@ jobs:
             pip install awscli
       - run:
           name: Backend smoke test
-          working_directory: ./backend
           command: |
-
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID  >> "backend/.env"
-            echo AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION >> "backend/.env"
-            echo AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY >> "backend/.env"
-            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-
             BACKEND_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -420,7 +408,6 @@ jobs:
             fi
       - run:
           name: Frontend smoke test.
-          working_directory: ./backend
           command: |
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
             echo ${URL} 
