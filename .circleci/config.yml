@@ -287,9 +287,7 @@ jobs:
           command: |
             yum update -y
             yum install -y python3
-            wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            yum install epel-release-latest-7.noarch.rpm
-            yum update -y
+            yum install -y ansible
             yum install git python python-devel python-pip openssl ansible -y
             yum install -y npm 
             yum install -y node
@@ -346,7 +344,7 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
             cat inventory.txt
-            ansible-playbook -i inventory deploy-server.yaml -vv
+            ansible-playbook -i inventory.txt deploy-backend.yml -vv
 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
