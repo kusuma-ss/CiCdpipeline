@@ -294,7 +294,6 @@ jobs:
             yum -y install curl
             curl -sL https://rpm.nodesource.com/setup_16.x | bash -
             yum install -y nodejs
-            yum install -y npm
             
       - run:
           name: Get backend url
