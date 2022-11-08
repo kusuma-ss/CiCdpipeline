@@ -23,6 +23,7 @@
     tar xzvf ~/app/artifact.tar.gz
   
 - name: Start backend
+  become: true
   shell:  |
     /usr/bin/pm2 start ~/app/dist/main.js --name backend -f
   environment:
