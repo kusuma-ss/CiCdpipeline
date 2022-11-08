@@ -259,7 +259,7 @@ jobs:
             npm install
             npm run migrations > migrations_dump.log
             export migration_status=$(cat migrations_dump.log | grep -c "has been executed successfully")
-            tar -zcvf ~/project/backend/backend.tar.gz .
+            tar --warning=no-file-changed -zcvf ~/project/backend/backend.tar.gz .
       - run:
           name: Send migration status to kvdb.io
           command: |   
@@ -289,10 +289,10 @@ jobs:
           command: |
             yum update -y
             yum install -y python3
-            yum install -y python3-pip
+            yum install -y python3-pip 
             python3 -m pip install --user --upgrade pip 
-            python3 -m pip install ansible
-            yum install git python python-devel python-pip openssl ansible -y
+            python3 -m pip install ansible  
+            yum install -y python3-devel git openssl
             yum -y install curl
             curl -sL https://rpm.nodesource.com/setup_16.x | bash -
             yum install -y nodejs
