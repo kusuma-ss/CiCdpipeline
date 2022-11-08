@@ -8,7 +8,7 @@
 - name: Upload app 
   become: true
   copy:
-    src: /backend/artifact.tar.gz
+    src: root/project/artifact.tar.gz
     dest: "~/app/"
     
 - name: Install dependencies
