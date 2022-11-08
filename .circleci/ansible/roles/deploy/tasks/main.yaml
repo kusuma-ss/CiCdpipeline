@@ -26,23 +26,23 @@
   become: true
   shell:  |
     /usr/bin/pm2 start ~/app/dist/main.js --name backend -f
-  environment:
-    ENVIRONMENT: production
-    NODE_ENV: production
-    TYPEORM_CONNECTION: postgres
-    TYPEORM_MIGRATIONS_DIR: ~/app/src/migrations
-    TYPEORM_MIGRATIONS: ~/app/src/migrations/*.ts
-    TYPEORM_ENTITIES: ~/app/src/modules/domain/**/*.entity.ts
-    TYPEORM_HOST: peopledatabase.ckk21qjne6sv.us-east-1.rds.amazonaws.com
-    TYPEORM_PORT: 5432
-    TYPEORM_USERNAME: postgres
-    TYPEORM_PASSWORD: postgres123
-    TYPEORM_DATABASE: postgres
+  #environment:
+  #  ENVIRONMENT: production
+  #  NODE_ENV: production
+  #  TYPEORM_CONNECTION: postgres
+  #  TYPEORM_MIGRATIONS_DIR: ~/app/src/migrations
+  #  TYPEORM_MIGRATIONS: ~/app/src/migrations/*.ts
+  #  TYPEORM_ENTITIES: ~/app/src/modules/domain/**/*.entity.ts
+  #  TYPEORM_HOST: peopledatabase.ckk21qjne6sv.us-east-1.rds.amazonaws.com
+  #  TYPEORM_PORT: 5432
+  #  TYPEORM_USERNAME: postgres
+  #  TYPEORM_PASSWORD: postgres123
+  #  TYPEORM_DATABASE: postgres
 
 - name: Start app on backend
   become: true
   shell:  |
-    cd ~/app/root/project/backend
+    cd ~/app
     npm install
     pm2 stop default
     pm2 start npm -- start
