@@ -4,6 +4,19 @@
   apt:  
     update_cache: yes
 
+- name: Remove useless packages from the cache
+  apt:
+    autoclean: yes
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+
+- name: "autoremove unmet dependencies or broken apt package"
+  become: true
+  apt: 
+    autoremove: yes
+
 - name : "upgrade package"
   become: true
   apt: 
