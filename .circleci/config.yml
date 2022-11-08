@@ -452,21 +452,31 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            yum install -y tar gzip curl
-            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
-            yum install -y nodejs
+      #- run:
+      #    name: Install dependencies
+      #    command: |
+      #      yum install -y tar gzip curl
+      #      curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+      #      yum install -y nodejs
       - run:
           name: Update cloudfront distribution
-          working_directory: ./.circleci/files
+          working_directory: ~/project/.circleci/files
           command: |
+            export OldWorkflowID=$(aws cloudformation \
+            --list-exports --query "Export[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+            echo $OldWorkflowID >> ~/OldWorkflowID.txt
+            cat ~/OldWorkflowID.txt
+
             aws cloudformation deploy \
-            --template-file .circleci/files/cloudfront.yml \
+            --template-file cloudfront.yml \
             --stack-name InitialStack \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
+
+            echo OldWorkflowID: "$OldWorkflowID"
+            echo Current Workflow ID : "${CIRCLE_WORKFLOW_ID:0:7}"
+
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
