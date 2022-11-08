@@ -1,13 +1,15 @@
 ---
 - name: Creates App directory
+  become: true
   file:
     path: ~/app
     state: directory
     
 - name: Upload app 
+  become: true
   copy:
     src: ~/project/backend/artifact.tar.gz
-    dest: "~/app"
+    dest: "~/app/"
     
 - name: Install dependencies
   become: true

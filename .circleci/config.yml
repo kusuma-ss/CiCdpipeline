@@ -154,29 +154,31 @@ jobs:
           key: backend-scan
 
   deploy-infrastructure:
+  #Select a Docker image that supports the AWS CLI
     docker:
       - image : amazon/aws-cli
     steps:
+      #Checkout code from git
       - checkout 
       - run:
           name: Install dependencies
           command: yum install -y tar gzip
+          # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback).
       - run:
           name: Ensure back-end infrastructure exists
           working_directory: ~/project/.circleci/files
-          command: |
-            # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
+          command: | 
               aws cloudformation deploy \
               --template-file backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
               
+      # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
       - run:
           name: Ensure front-end infrastructure exist
           working_directory: ~/project/.circleci/files
           command: |
-            # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
               aws cloudformation deploy \
               --template-file frontend.yml \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -190,7 +192,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
-                      
+      #Adding the EC2 instance IP to the Ansible inventory                
       - run:
           name: Add backend ip to ansible inventory
           working_directory: ~/project/.circleci/ansible
@@ -198,7 +200,7 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> inventory.txt
+              --output text >> .circleci/ansible/inventory.txt
             cat inventory.txt
 
       - persist_to_workspace:
@@ -210,15 +212,20 @@ jobs:
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
           
   configure-infrastructure:
+  #Selecting a Docker image that supports Ansible
     docker:
       - image: python:3.11-rc-alpine
       
     steps:
+    #Checkout code from git.
       - checkout 
+      #Add the SSH key fingerprint to job so that Ansible will have access to the EC2 instance via SSH.
       - add_ssh_keys:
           fingerprints: ["74:54:be:70:86:06:87:01:32:bd:3f:eb:41:b4:78:8b"]
+      #Attach the "workspace" to the job so that you have access to all the files you need
       - attach_workspace:
           at: ~/project/.circleci/ansible
+      #Install dependencies for the next step, such as tar, gzip, ansible, or awscli.
       - run:
           name: Install dependencies
           command: |
@@ -239,8 +246,10 @@ jobs:
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
       
   run-migrations:
+  #Select a Docker image that's compatible with NodeJS.
     executor: nodejs
     steps:
+    #Checkout code from git
       - checkout
       #- attach_workspace:
       #    at: ~/project/.circleci/ansible
@@ -279,9 +288,11 @@ jobs:
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
+  #Select a Docker image that can handle the AWS CLI.
     docker:
       - image: amazon/aws-cli
     steps:
+
       - checkout
       - run:
           name: Install dependencies
@@ -304,7 +315,7 @@ jobs:
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL = ${API_URL}"
+            echo "${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run:
@@ -409,6 +420,7 @@ jobs:
             else
                 return 1
             fi
+            
       - run:
           name: Frontend smoke test.
           command: |
