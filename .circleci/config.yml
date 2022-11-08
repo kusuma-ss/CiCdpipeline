@@ -11,16 +11,21 @@ commands:
       ID : 
         type: string  
     steps:
+      - run: 
+          name: Delete uploaded files on s3 Bucket 
+          when: on_fail
+          command: |
+            aws s3 rm "s3://udapeople-<< parameters.ID>>" --recursive
       - run:
           name: Destroy backend environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name Udapeople-backend-<< parameters.ID >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.ID >>
       - run:
           name : Destory frontend environment
           when: on_fail
           command : |
-            aws cloudformation delete-stack --stack-name Udapeople-frontend-<< parameters.ID >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.ID >>
 
   revert-migrations:
     description: Revert the last migration
@@ -432,8 +437,7 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-                # Change this to 0 after the job fails
-              return 1
+              return 0
             else
               return 1
             fi
