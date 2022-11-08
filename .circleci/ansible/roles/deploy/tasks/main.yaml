@@ -8,8 +8,8 @@
 - name: Upload app 
   become: true
   copy:
-    src: files/artifact.tar.gz
-    dest: "~/app/"
+    src: artifact.tar.gz
+    dest: ~/app/
     
 - name: Install dependencies
   become: true
