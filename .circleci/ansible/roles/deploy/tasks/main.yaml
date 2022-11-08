@@ -8,6 +8,7 @@
   copy:
     src: ~/project/backend/artifact.tar.gz
     dest: "~/app"
+    
 - name: Install dependencies
   become: true
   shell: |

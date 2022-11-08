@@ -242,8 +242,8 @@ jobs:
     executor: nodejs
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/project/.circleci/ansible
+      #- attach_workspace:
+      #    at: ~/project/.circleci/ansible
       - run:
           name: Install AWS CLI dependencies
           command: |
@@ -259,7 +259,6 @@ jobs:
             npm install
             npm run migrations > migrations_dump.log
             export migration_status=$(cat migrations_dump.log | grep -c "has been executed successfully")
-            tar --warning=no-file-changed -zcvf ~/project/backend/backend.tar.gz .
       - run:
           name: Send migration status to kvdb.io
           command: |   
@@ -270,11 +269,11 @@ jobs:
               fi     
               echo "workflow_id=${CIRCLE_WORKFLOW_ID:0:7}"
 
-      - persist_to_workspace:
-          root: ~/project/backend
-          paths:
-            - backend.tar.gz
-            - migrations_dump.log
+      #- persist_to_workspace:
+      #    root: ~/project/backend
+      #    paths:
+            #- backend.tar.gz
+      #      - migrations_dump.log
 
       - destroy-environment:  
           ID: ${CIRCLE_WORKFLOW_ID:0:7}
