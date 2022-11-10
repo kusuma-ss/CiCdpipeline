@@ -25,7 +25,8 @@
 - name: Start backend
   become: true
   shell:  |
-    /usr/bin/pm2 start ~/app/dist/main.js --name backend -f
+    #/usr/bin/pm2 start ~/app/dist/main.js --name backend -f
+    pm2 start npm --name backend -- run start
   #environment:
   #  ENVIRONMENT: production
   #  NODE_ENV: production
