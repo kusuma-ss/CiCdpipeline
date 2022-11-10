@@ -20,13 +20,13 @@
     apt-get install gcc g++ make -y
     npm install -g npm
     npm install -g pm2
-    pm2 status
+    cd ~/app
     tar xzvf ~/app/artifact.tar.gz
   
 - name: Start backend
   become: true
   shell:  |
-    /usr/bin/pm2 start ~/app/dist/main.js --name backend -f
+    pm2 start ~/app/dist/main.js --name backend -f
   #pm2 start npm --name backend -- run start
   #pm2 start ~/app/dist/main.js --name backend -f
   #environment:
