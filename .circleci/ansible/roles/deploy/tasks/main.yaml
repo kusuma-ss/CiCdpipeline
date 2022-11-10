@@ -14,8 +14,7 @@
 - name: Install dependencies
   #become: true
   shell: |
-    curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-    #curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash -
+    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
     sudo apt-get install -y nodejs
     sudo apt-get install gcc g++ make -y
     sudo npm install -g npm
@@ -44,6 +43,8 @@
   #  TYPEORM_PASSWORD: postgres123
   #  TYPEORM_DATABASE: postgres
   register: command_ouput
+- debug:
+    var: command_output.stdout_lines
 
 - name: Start app on backend
   #become: true
