@@ -19,7 +19,7 @@
     sudo apt-get install -y nodejs
     apt-get install gcc g++ make -y
     npm install -g npm
-    npm install -g p
+    npm install pm2 -g
     cd ~/app
     tar xzvf ~/app/artifact.tar.gz
   
