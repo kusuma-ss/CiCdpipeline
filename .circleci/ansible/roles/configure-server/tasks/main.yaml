@@ -24,10 +24,10 @@
   apt: 
     upgrade: yes
 
-- name:  "install nodejs and npm"
+- name:  "install nodejs"
   become : true
   apt: 
-    name: ["nodejs","npm"]
+    name: ["nodejs"]
     state: latest
     update_cache: yes
   
